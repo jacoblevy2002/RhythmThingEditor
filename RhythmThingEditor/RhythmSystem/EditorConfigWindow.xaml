@@ -1,0 +1,24 @@
+﻿<Window x:Class="RhythmThingEditor.RhythmSystem.EditorConfigWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RhythmThingEditor.RhythmSystem"
+        mc:Ignorable="d"
+        Title="EditorConfig" Height="450" Width="800">
+    <StackPanel>
+        <Grid Margin="5,5,5,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="130"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="auto" MaxWidth="500"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock FontSize="15" Text="Rhythmthing exe:" Grid.Column="0" FontWeight="Bold"/>
+            <Button FontSize="15" Content="Select exe" Grid.Column="1" Click="exeBtn_Click"/>
+            <TextBlock HorizontalAlignment="Right" FontStyle="Oblique" x:Name="exeLabel" Grid.Column="2" FontSize="15" Margin="5,0,0,0"/>
+        </Grid>
+        <Grid Margin="5,10,5,0">
+            <Button Content="Save config" FontSize="15" Click="btnSave_Click"/>
+        </Grid>
+    </StackPanel>
+</Window>

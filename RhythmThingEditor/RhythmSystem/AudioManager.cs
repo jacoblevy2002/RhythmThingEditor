@@ -1,0 +1,154 @@
+﻿using CSCore;
+using CSCore.Codecs;
+using CSCore.SoundOut;
+using CSCore.Streams;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+
+namespace RhythmThingEditor.RhythmSystem
+{
+
+
+    public class AudioManager
+    {
+        private static AudioManager _instance;
+        public static AudioManager Instance
+        {
+            get
+            {
+                if (_instance == null) _instance = new AudioManager();
+                return _instance; 
+            }
+        }
+        public const int sampleRate = 44100;
+        const int LATENCY = 1;
+        private Mixer _mixer;
+        public List<AudioTrack> Tracks;
+        WasapiOut soundOut;
+        public AudioManager()
+        {
+            _mixer = new Mixer(2, sampleRate) { FillWithZeros = true, DivideResult = false };
+            Tracks = new List<AudioTrack>();
+            soundOut = new WasapiOut() { Latency = LATENCY };
+            soundOut.Initialize(_mixer.ToWaveSource());
+            soundOut.Volume = 0.45f;
+            soundOut.Play();
+        }
+
+        public AudioTrack addTrack(string path)
+        {
+            
+            string dir = Path.Combine(Directory.GetCurrentDirectory(), "!Content", path);
+            VolumeSource tempvol;
+            //this class is no longer available to me :( no pitch down on fail.
+            //PitchShifter shifer;
+            ISampleSource temp = CodecFactory.Instance.GetCodec(dir).ChangeSampleRate(sampleRate).ToStereo().ToSampleSource().AppendSource(x => new VolumeSource(x), out tempvol);
+            AudioTrack track = new AudioTrack(path, temp, tempvol);
+
+
+            _mixer.AddSource(track.sampleSource);
+            Tracks.Add(track);
+            
+            return track;
+
+        }
+        public void addTrack(AudioTrack track)
+        {
+            _mixer.AddSource(track.sampleSource);
+            Tracks.Add(track);
+        }
+
+        public void removeTrack(AudioTrack track)
+        {
+            if (track != null)
+            {
+                _mixer.RemoveSource(track.sampleSource);
+                Tracks.Remove(track);
+
+            }
+
+        }
+
+        public void removeTrack(string name)
+        {
+            try
+            {
+                AudioTrack temp = Tracks.Find(x => x.name == name);
+                _mixer.RemoveSource(temp.sampleSource);
+                Tracks.Remove(temp);
+
+            }
+            catch
+            {
+
+                Console.WriteLine($"cant remove {name}");
+            }
+        }
+
+        public void playForget(string path, float vol)
+        {
+            string dir = Path.Combine(Directory.GetCurrentDirectory(), "!Content", path);
+            VolumeSource tempvol;
+            ISampleSource temp = CodecFactory.Instance.GetCodec(dir).ChangeSampleRate(sampleRate).ToStereo().ToSampleSource().AppendSource(x => new VolumeSource(x), out tempvol);
+            tempvol.Volume = vol;
+            _mixer.AddSource(temp);
+        }
+
+        public void playForget(string path, float vol, float pitch)
+        {
+            string dir = Path.Combine(Directory.GetCurrentDirectory(), "!Content", path);
+            VolumeSource tempvol;
+
+            //PitchShifter temppitch;
+            ISampleSource temp = CodecFactory.Instance.GetCodec(dir).ChangeSampleRate(sampleRate).ToStereo().ToSampleSource().AppendSource(x => new VolumeSource(x), out tempvol);
+            tempvol.Volume = vol;
+            //temppitch.PitchShiftFactor = pitch;
+            _mixer.AddSource(temp);
+
+
+        }
+
+        public void playForget(string path)
+        {
+            string dir = Path.Combine(Directory.GetCurrentDirectory(), "!Content", path);
+
+            ISampleSource temp = CodecFactory.Instance.GetCodec(dir).ChangeSampleRate(sampleRate).ToStereo().ToSampleSource();
+
+            _mixer.AddSource(temp);
+        }
+
+        public void playForget(ISampleSource source)
+        {
+
+            _mixer.AddSource(source);
+        }
+        public static void Destroy()
+        {
+            try // quick fix due to time constraints. error occurs when app is closed without the waveform having been played, but as issue occurs on close, an empty catch is fine
+            {
+                _instance._mixer.Dispose();
+                _instance.soundOut.Dispose();
+                _instance = null;
+            } catch { }
+        }
+    }
+
+
+    public class AudioTrack
+    {
+        public AudioTrack(string name, ISampleSource sample, VolumeSource volume)
+        {
+            this.name = name;
+            this.sampleSource = sample;
+            this.volumeSource = volume;
+            //this.shifter = shifter;
+        }
+        public string name;
+        public ISampleSource sampleSource;
+        public VolumeSource volumeSource;
+        //public PitchShifter shifter;
+
+    }
+}

@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>RhythmThingEditor</RootNamespace>
+    <UseWPF>true</UseWPF>
+	<UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Sprites\DownArrow.bmp" />
+    <None Remove="Sprites\LeftArrow.bmp" />
+    <None Remove="Sprites\RightArrow.bmp" />
+    <None Remove="Sprites\SelectedDownArrow.bmp" />
+    <None Remove="Sprites\SelectedLeftArrow.bmp" />
+    <None Remove="Sprites\SelectedRightArrow.bmp" />
+    <None Remove="Sprites\SelectedUpArrow.bmp" />
+    <None Remove="Sprites\UpArrow.bmp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Sprites\RightArrow.bmp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CSCore" Version="1.2.1.2" />
+    <PackageReference Include="CSCore.Ffmpeg" Version="1.2.0-beta1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Sprites\DownArrow.bmp" />
+    <Resource Include="Sprites\LeftArrow.bmp" />
+    <Resource Include="Sprites\SelectedDownArrow.bmp" />
+    <Resource Include="Sprites\SelectedLeftArrow.bmp" />
+    <Resource Include="Sprites\SelectedRightArrow.bmp" />
+    <Resource Include="Sprites\SelectedUpArrow.bmp" />
+    <Resource Include="Sprites\UpArrow.bmp" />
+  </ItemGroup>
+
+</Project>
